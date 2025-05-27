@@ -2,11 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Batuzai - Generador Avanzado de Tarjetas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Batuzai - Generador y Validador de Tarjetas</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
-
     body {
       font-family: 'Orbitron', sans-serif;
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
@@ -16,131 +15,54 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
-
     .container {
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0,0,0,0.7);
       border: 2px solid #00fff7;
       border-radius: 15px;
-      padding: 30px;
-      width: 500px;
+      padding: 25px;
+      width: 600px;
       box-shadow: 0 0 30px #00fff7;
     }
-
     h1 {
       text-align: center;
-      margin-bottom: 20px;
       font-size: 32px;
-      color: #00fff7;
+      margin-bottom: 20px;
       letter-spacing: 2px;
     }
-
-    textarea, input {
+    input, textarea, button {
       width: 100%;
-      background: #0f2027;
-      color: #00fff7;
-      border: 1px solid #00fff7;
       border-radius: 8px;
       padding: 10px;
-      font-size: 14px;
       margin-bottom: 10px;
+      font-size: 14px;
+      font-family: monospace;
+      background: #0f2027;
+      border: 1px solid #00fff7;
+      color: #00fff7;
       outline: none;
     }
-
     button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
+      font-weight: bold;
       background-color: #00fff7;
       color: #0f2027;
-      border: none;
-      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      font-weight: bold;
-      margin-bottom: 10px;
+      transition: 0.3s;
     }
-
     button:hover {
       background-color: #00c4aa;
       transform: scale(1.05);
     }
+    .resultado {
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      background: #021d2a;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px
 
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 12px;
-      color: #00fff7;
-      opacity: 0.7;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Batuzai</h1>
-
-    <h2>🎲 Generador Avanzado de Tarjetas</h2>
-    <input type="text" id="bin" placeholder="BIN (ej: 414720, 552244, etc.)">
-    <input type="number" id="cantidad" placeholder="Cantidad de tarjetas a generar (ej: 100)">
-    <button onclick="generarTarjetas()">Generar Tarjetas</button>
-    <button onclick="descargarTarjetas()">Descargar como .txt</button>
-    <textarea id="generadas" placeholder="Aquí aparecerán las tarjetas generadas..."></textarea>
-
-    <div class="footer">Batuzai © 2025 - Herramientas Futuristas</div>
-  </div>
-
-  <script>
-    function generarTarjetas() {
-      const bin = document.getElementById('bin').value.replace(/\D/g, '');
-      const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
-      const generadas = [];
-
-      if (bin.length < 6 || bin.length > 15) {
-        alert('El BIN debe tener entre 6 y 15 dígitos.');
-        return;
-      }
-
-      for (let i = 0; i < cantidad; i++) {
-        let tarjeta = generarNumeroLuhn(bin, 16);
-        let mes = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
-        let anio = String(new Date().getFullYear() + Math.floor(Math.random() * 5) + 1).slice(-2);
-        let cvv = String(Math.floor(100 + Math.random() * 900));
-        generadas.push(`${tarjeta}|${mes}/${anio}|${cvv}`);
-      }
-
-      document.getElementById('generadas').value = generadas.join('\n');
-    }
-
-    function generarNumeroLuhn(prefix, length) {
-      let num = prefix;
-      while (num.length < length - 1) {
-        num += Math.floor(Math.random() * 10);
-      }
-      let sum = 0;
-      let reversed = num.split('').reverse().map(Number);
-      for (let i = 0; i < reversed.length; i++) {
-        let n = reversed[i];
-        if (i % 2 === (length % 2 === 0 ? 1 : 0)) {
-          n *= 2;
-          if (n > 9) n -= 9;
-        }
-        sum += n;
-      }
-      let checkDigit = (10 - (sum % 10)) % 10;
-      return num + checkDigit;
-    }
-
-    function descargarTarjetas() {
-      const tarjetas = document.getElementById('generadas').value;
-      const blob = new Blob([tarjetas], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'tarjetas_batuzai.txt';
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-  </script>
 </body>
 </html>
 

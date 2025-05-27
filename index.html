@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Batuzai - Validador de Tarjetas</title>
+  <title>Batuzai - Generador Avanzado de Tarjetas</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
@@ -23,7 +23,7 @@
       border: 2px solid #00fff7;
       border-radius: 15px;
       padding: 30px;
-      width: 450px;
+      width: 500px;
       box-shadow: 0 0 30px #00fff7;
     }
 
@@ -35,16 +35,14 @@
       letter-spacing: 2px;
     }
 
-    textarea {
+    textarea, input {
       width: 100%;
-      height: 180px;
       background: #0f2027;
       color: #00fff7;
       border: 1px solid #00fff7;
       border-radius: 8px;
       padding: 10px;
       font-size: 14px;
-      resize: vertical;
       margin-bottom: 10px;
       outline: none;
     }
@@ -60,26 +58,12 @@
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.2s ease;
       font-weight: bold;
+      margin-bottom: 10px;
     }
 
     button:hover {
       background-color: #00c4aa;
       transform: scale(1.05);
-    }
-
-    .resultado {
-      margin-top: 20px;
-      max-height: 300px;
-      overflow-y: auto;
-      font-family: monospace;
-    }
-
-    .valido {
-      color: #00ff9d;
-    }
-
-    .invalido {
-      color: #ff4f4f;
     }
 
     .footer {
@@ -94,40 +78,69 @@
 <body>
   <div class="container">
     <h1>Batuzai</h1>
-    <textarea id="tarjetas" placeholder="Ingresa números de tarjeta, uno por línea..."></textarea>
-    <button onclick="validarTarjetas()">Verificar Tarjetas</button>
-    <div class="resultado" id="resultado"></div>
-    <div class="footer">Batuzai © 2025 - Todos los derechos reservados</div>
+
+    <h2>🎲 Generador Avanzado de Tarjetas</h2>
+    <input type="text" id="bin" placeholder="BIN (ej: 414720, 552244, etc.)">
+    <input type="number" id="cantidad" placeholder="Cantidad de tarjetas a generar (ej: 100)">
+    <button onclick="generarTarjetas()">Generar Tarjetas</button>
+    <button onclick="descargarTarjetas()">Descargar como .txt</button>
+    <textarea id="generadas" placeholder="Aquí aparecerán las tarjetas generadas..."></textarea>
+
+    <div class="footer">Batuzai © 2025 - Herramientas Futuristas</div>
   </div>
 
   <script>
-    function luhnCheck(number) {
-      const digits = number.replace(/\D/g, '').split('').reverse().map(Number);
-      let total = 0;
-      for (let i = 0; i < digits.length; i++) {
-        let n = digits[i];
-        if (i % 2 !== 0) {
+    function generarTarjetas() {
+      const bin = document.getElementById('bin').value.replace(/\D/g, '');
+      const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
+      const generadas = [];
+
+      if (bin.length < 6 || bin.length > 15) {
+        alert('El BIN debe tener entre 6 y 15 dígitos.');
+        return;
+      }
+
+      for (let i = 0; i < cantidad; i++) {
+        let tarjeta = generarNumeroLuhn(bin, 16);
+        let mes = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
+        let anio = String(new Date().getFullYear() + Math.floor(Math.random() * 5) + 1).slice(-2);
+        let cvv = String(Math.floor(100 + Math.random() * 900));
+        generadas.push(`${tarjeta}|${mes}/${anio}|${cvv}`);
+      }
+
+      document.getElementById('generadas').value = generadas.join('\n');
+    }
+
+    function generarNumeroLuhn(prefix, length) {
+      let num = prefix;
+      while (num.length < length - 1) {
+        num += Math.floor(Math.random() * 10);
+      }
+      let sum = 0;
+      let reversed = num.split('').reverse().map(Number);
+      for (let i = 0; i < reversed.length; i++) {
+        let n = reversed[i];
+        if (i % 2 === (length % 2 === 0 ? 1 : 0)) {
           n *= 2;
           if (n > 9) n -= 9;
         }
-        total += n;
+        sum += n;
       }
-      return total % 10 === 0;
+      let checkDigit = (10 - (sum % 10)) % 10;
+      return num + checkDigit;
     }
 
-    function validarTarjetas() {
-      const input = document.getElementById('tarjetas').value;
-      const lineas = input.split('\n').filter(l => l.trim() !== '');
-      let resultadosHTML = '';
-
-      lineas.forEach((linea, index) => {
-        const numero = linea.trim();
-        const esValido = luhnCheck(numero);
-        resultadosHTML += `<div><strong>${index + 1}.</strong> ${numero} - <span class="${esValido ? 'valido' : 'invalido'}">${esValido ? 'VÁLIDO' : 'INVÁLIDO'}</span></div>`;
-      });
-
-      document.getElementById('resultado').innerHTML = resultadosHTML;
+    function descargarTarjetas() {
+      const tarjetas = document.getElementById('generadas').value;
+      const blob = new Blob([tarjetas], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'tarjetas_batuzai.txt';
+      link.click();
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>
 </html>
+

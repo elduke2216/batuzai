@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Batuzai - Validador de Tarjetas</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #00fff7;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #00fff7;
+      border-radius: 15px;
+      padding: 30px;
+      width: 450px;
+      box-shadow: 0 0 30px #00fff7;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 32px;
+      color: #00fff7;
+      letter-spacing: 2px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 180px;
+      background: #0f2027;
+      color: #00fff7;
+      border: 1px solid #00fff7;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 10px;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #00fff7;
+      color: #0f2027;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #00c4aa;
+      transform: scale(1.05);
+    }
+
+    .resultado {
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+    }
+
+    .valido {
+      color: #00ff9d;
+    }
+
+    .invalido {
+      color: #ff4f4f;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #00fff7;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Batuzai</h1>
+    <textarea id="tarjetas" placeholder="Ingresa números de tarjeta, uno por línea..."></textarea>
+    <button onclick="validarTarjetas()">Verificar Tarjetas</button>
+    <div class="resultado" id="resultado"></div>
+    <div class="footer">Batuzai © 2025 - Todos los derechos reservados</div>
+  </div>
+
+  <script>
+    function luhnCheck(number) {
+      const digits = number.replace(/\D/g, '').split('').reverse().map(Number);
+      let total = 0;
+      for (let i = 0; i < digits.length; i++) {
+        let n = digits[i];
+        if (i % 2 !== 0) {
+          n *= 2;
+          if (n > 9) n -= 9;
+        }
+        total += n;
+      }
+      return total % 10 === 0;
+    }
+
+    function validarTarjetas() {
+      const input = document.getElementById('tarjetas').value;
+      const lineas = input.split('\n').filter(l => l.trim() !== '');
+      let resultadosHTML = '';
+
+      lineas.forEach((linea, index) => {
+        const numero = linea.trim();
+        const esValido = luhnCheck(numero);
+        resultadosHTML += `<div><strong>${index + 1}.</strong> ${numero} - <span class="${esValido ? 'valido' : 'invalido'}">${esValido ? 'VÁLIDO' : 'INVÁLIDO'}</span></div>`;
+      });
+
+      document.getElementById('resultado').innerHTML = resultadosHTML;
+    }
+  </script>
+</body>
+</html>

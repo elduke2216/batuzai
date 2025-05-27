@@ -61,8 +61,106 @@
       background: #021d2a;
       padding: 15px;
       border-radius: 8px;
-      border: 1px
+      border: 1px solid #00fff7;
+    }
+    .valido {
+      color: #0f0;
+      font-weight: bold;
+    }
+    .invalido {
+      color: #f00;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Batuzai - Generador y Validador</h1>
+    
+    <input type="text" id="bin" placeholder="Ingresa BIN (ej: 414720)" maxlength="15" />
+    <input type="number" id="cantidad" placeholder="Cantidad de tarjetas a generar" min="1" max="1000" value="100" />
+    
+    <button onclick="generarYValidar()">Generar y Validar</button>
+    <button onclick="descargar()">Descargar Resultados (.txt)</button>
+    
+    <textarea id="resultados" readonly placeholder="Aquí aparecerán las tarjetas generadas y validadas..." class="resultado"></textarea>
+  </div>
 
+  <script>
+    function luhnCheck(number) {
+      const digits = number.replace(/\D/g, '').split('').reverse().map(Number);
+      let sum = 0;
+      for(let i=0; i<digits.length; i++) {
+        let n = digits[i];
+        if(i % 2 !== 0) {
+          n *= 2;
+          if(n > 9) n -= 9;
+        }
+        sum += n;
+      }
+      return sum % 10 === 0;
+    }
+
+    function generarNumeroLuhn(prefix, length) {
+      let num = prefix;
+      while(num.length < length - 1) {
+        num += Math.floor(Math.random() * 10);
+      }
+      // Calcular dígito verificador
+      let sum = 0;
+      let reversed = num.split('').reverse().map(Number);
+      for(let i=0; i<reversed.length; i++) {
+        let n = reversed[i];
+        if(i % 2 === (length % 2 === 0 ? 1 : 0)) {
+          n *= 2;
+          if(n > 9) n -= 9;
+        }
+        sum += n;
+      }
+      let checkDigit = (10 - (sum % 10)) % 10;
+      return num + checkDigit;
+    }
+
+    function generarYValidar() {
+      const bin = document.getElementById('bin').value.replace(/\D/g, '');
+      let cantidad = parseInt(document.getElementById('cantidad').value);
+
+      if(!bin || bin.length < 6 || bin.length > 15) {
+        alert('Por favor, ingresa un BIN válido (6 a 15 dígitos).');
+        return;
+      }
+      if(!cantidad || cantidad < 1 || cantidad > 1000) {
+        alert('La cantidad debe ser entre 1 y 1000.');
+        return;
+      }
+
+      let resultados = [];
+      for(let i=0; i < cantidad; i++) {
+        let tarjeta = generarNumeroLuhn(bin, 16);
+        let valido = luhnCheck(tarjeta);
+        let mes = String(Math.floor(Math.random() * 12) + 1).padStart(2,'0');
+        let anio = String(new Date().getFullYear() + Math.floor(Math.random() * 5) + 1).slice(-2);
+        let cvv = String(Math.floor(100 + Math.random() * 900));
+        resultados.push(`${tarjeta} | ${mes}/${anio} | CVV:${cvv} | ${valido ? 'VÁLIDO' : 'INVÁLIDO'}`);
+      }
+      document.getElementById('resultados').value = resultados.join('\n');
+    }
+
+    function descargar() {
+      const text = document.getElementById('resultados').value;
+      if(!text) {
+        alert('No hay datos para descargar.');
+        return;
+      }
+      const blob = new Blob([text], {type: 'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'tarjetas_batuzai.txt';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
 </body>
 </html>
 

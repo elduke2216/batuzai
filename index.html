@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <title>Batuzai - Cyberpunk Generator</title>
+  
+  <!-- Tu código de Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6675500679885402"
      crossorigin="anonymous"></script>
+  
+  <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
 
     * {
@@ -103,6 +107,12 @@
       font-size: 1.2rem;
       margin-top: 20px;
       word-break: break-word;
+      max-height: 350px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.2);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
     }
 
     /* Efecto de luces al mover el mouse */
@@ -124,7 +134,7 @@
   <div class="ad">
     <ins class="adsbygoogle"
          style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-client="ca-pub-6675500679885402"
          data-ad-slot="1111111111"
          data-ad-format="auto"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -134,7 +144,7 @@
   <div class="sidebar-left">
     <ins class="adsbygoogle"
          style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-client="ca-pub-6675500679885402"
          data-ad-slot="3333333333"
          data-ad-format="auto"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -143,7 +153,7 @@
   <div class="sidebar-right">
     <ins class="adsbygoogle"
          style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-client="ca-pub-6675500679885402"
          data-ad-slot="4444444444"
          data-ad-format="auto"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -157,7 +167,7 @@
     <div class="ad">
       <ins class="adsbygoogle"
            style="display:block"
-           data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+           data-ad-client="ca-pub-6675500679885402"
            data-ad-slot="5555555555"
            data-ad-format="auto"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -170,7 +180,7 @@
   <div class="ad">
     <ins class="adsbygoogle"
          style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-client="ca-pub-6675500679885402"
          data-ad-slot="2222222222"
          data-ad-format="auto"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -178,10 +188,64 @@
 
   <script>
     function generar() {
-      document.getElementById("resultado").innerHTML = "Generando tarjetas... (aquí va tu código)";
+      let bin = prompt("Ingresa el BIN (ej: 453927)");
+      if (!bin || bin.length < 6) {
+        document.getElementById("resultado").innerHTML = "Por favor, ingresa un BIN válido de al menos 6 dígitos.";
+        return;
+      }
+
+      let cantidad = 100;
+      let tarjetas = [];
+
+      while (tarjetas.length < cantidad) {
+        let tarjeta = generarCC(bin);
+        if (luhn(tarjeta)) {
+          tarjetas.push(tarjeta);
+        }
+      }
+
+      document.getElementById("resultado").innerHTML = "<strong>Tarjetas generadas:</strong><br>" + tarjetas.join("<br>");
+    }
+
+    function generarCC(bin) {
+      let cc = bin;
+      while (cc.length < 15) {  // Genera hasta 15 dígitos antes del dígito verificador
+        cc += Math.floor(Math.random() * 10);
+      }
+      let checkDigit = calcularLuhn(cc);
+      return cc + checkDigit;
+    }
+
+    function calcularLuhn(numero) {
+      let sum = 0;
+      let alt = true;
+      for (let i = numero.length - 1; i >= 0; i--) {
+        let n = parseInt(numero.charAt(i));
+        if (alt) {
+          n *= 2;
+          if (n > 9) n -= 9;
+        }
+        sum += n;
+        alt = !alt;
+      }
+      return (10 - (sum % 10)) % 10;
+    }
+
+    function luhn(numero) {
+      let sum = 0;
+      let alt = false;
+      for (let i = numero.length - 1; i >= 0; i--) {
+        let n = parseInt(numero.charAt(i));
+        if (alt) {
+          n *= 2;
+          if (n > 9) n -= 9;
+        }
+        sum += n;
+        alt = !alt;
+      }
+      return sum % 10 === 0;
     }
   </script>
 
 </body>
 </html>
-

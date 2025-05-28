@@ -1,60 +1,187 @@
-<script>
-  function generar() {
-    let bin = prompt("Ingresa el BIN (ej: 453927)");
-    if (!bin || bin.length < 6) {
-      document.getElementById("resultado").innerHTML = "Por favor, ingresa un BIN válido de al menos 6 dígitos.";
-      return;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Batuzai - Cyberpunk Generator</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    let cantidad = 100;
-    let tarjetas = [];
-
-    while (tarjetas.length < cantidad) {
-      let tarjeta = generarCC(bin);
-      if (luhn(tarjeta)) {
-        tarjetas.push(tarjeta);
-      }
+    body {
+      height: 100vh;
+      background: radial-gradient(circle, #0ff 10%, #000 90%);
+      color: #00fff7;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      overflow: hidden;
     }
 
-    document.getElementById("resultado").innerHTML = "<strong>Tarjetas generadas:</strong><br>" + tarjetas.join("<br>");
-  }
-
-  function generarCC(bin) {
-    let cc = bin;
-    while (cc.length < 15) {  // Genera hasta 15 dígitos
-      cc += Math.floor(Math.random() * 10);
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(45deg, rgba(0,255,255,0.1) 0, rgba(0,255,255,0.1) 2px, transparent 2px, transparent 10px);
+      animation: gridMove 10s linear infinite;
+      pointer-events: none;
     }
-    let checkDigit = calcularLuhn(cc);
-    return cc + checkDigit;
-  }
 
-  function calcularLuhn(numero) {
-    let sum = 0;
-    let alt = true;
-    for (let i = numero.length - 1; i >= 0; i--) {
-      let n = parseInt(numero.charAt(i));
-      if (alt) {
-        n *= 2;
-        if (n > 9) n -= 9;
-      }
-      sum += n;
-      alt = !alt;
+    @keyframes gridMove {
+      0% { transform: translate(0,0); }
+      100% { transform: translate(-100px, -100px); }
     }
-    return (10 - (sum % 10)) % 10;
-  }
 
-  function luhn(numero) {
-    let sum = 0;
-    let alt = false;
-    for (let i = numero.length - 1; i >= 0; i--) {
-      let n = parseInt(numero.charAt(i));
-      if (alt) {
-        n *= 2;
-        if (n > 9) n -= 9;
-      }
-      sum += n;
-      alt = !alt;
+    h1 {
+      font-size: 3rem;
+      text-shadow: 0 0 20px #00fff7, 0 0 40px #00ff87;
+      margin-top: 60px;
     }
-    return sum % 10 === 0;
-  }
-</script>
+
+    .btn {
+      background: linear-gradient(90deg, #00fff7, #00ff87);
+      border: none;
+      padding: 15px 30px;
+      color: #000;
+      font-weight: bold;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 30px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px #00fff7;
+    }
+
+    .btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px #00fff7, 0 0 60px #00ff87;
+    }
+
+    .content {
+      background: rgba(0, 255, 247, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 700px;
+      margin: 60px auto;
+      box-shadow: 0 0 40px rgba(0, 255, 247, 0.3);
+    }
+
+    .ad {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .sidebar-left, .sidebar-right {
+      position: fixed;
+      top: 100px;
+      width: 120px;
+      height: 600px;
+      background: rgba(0, 255, 247, 0.05);
+      border: 1px solid #00fff7;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 0 15px #00fff7;
+    }
+
+    .sidebar-left {
+      left: 10px;
+    }
+
+    .sidebar-right {
+      right: 10px;
+    }
+
+    #resultado {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      word-break: break-word;
+    }
+
+    /* Efecto de luces al mover el mouse */
+    body {
+      background-size: 400% 400%;
+      animation: bgShift 10s ease infinite;
+    }
+
+    @keyframes bgShift {
+      0% { background-position: 0 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Anuncio superior -->
+  <div class="ad">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-slot="1111111111"
+         data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <!-- Laterales -->
+  <div class="sidebar-left">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-slot="3333333333"
+         data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <div class="sidebar-right">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-slot="4444444444"
+         data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="content">
+    <h1>Batuzai Generator</h1>
+    <button class="btn" onclick="generar()">Generar Tarjetas</button>
+
+    <div class="ad">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+           data-ad-slot="5555555555"
+           data-ad-format="auto"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <div id="resultado"></div>
+  </div>
+
+  <!-- Anuncio inferior -->
+  <div class="ad">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+         data-ad-slot="2222222222"
+         data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <script>
+    function generar() {
+      document.getElementById("resultado").innerHTML = "Generando tarjetas... (aquí va tu código)";
+    }
+  </script>
+
+</body>
+</html>
+
